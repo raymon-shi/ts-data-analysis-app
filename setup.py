@@ -573,7 +573,7 @@ def ld(df, script_location):
                  'TotalITITouches', 'TotalBlankTouches', 'MeanRewardCollectionLatency', 'MeanCorrectTouchLatency',
                  'MeanIncorrectTouchLatency', 'SessionLengthTo1stReversalDuration',
                  'SessionLengthTo2ndReversalDuration', 'NumberOfTrialTo1stReversal', 'NumberOfTrialTo2ndReversal',
-                 'PercentCorrectTo1stReversal', 'PercentCorrectTo2ndReversal', 'Day']
+                 'PercentCorrectTo1stReversal', 'PercentCorrectTo2ndReversal', 'Day', 'MeanLatencyTo1stReversal']
 
     df_final = pd.DataFrame(columns=col_names)
 
@@ -605,10 +605,15 @@ def ld(df, script_location):
         get_fixed_session_time(df_final, df)
 
         number_correct_column_names = get_header_names(raw_data_headers, number_correct_header)
+        number_mean_reward_first_column_names = get_header_names(raw_data_headers, mean_reward_header)
 
         df['PercentCorrectTo1stReversal'] = np.nan
         get_percent_correctness_first(df, df_final, number_correct_column_names)
         df_final['PercentCorrectTo1stReversal'] = df['PercentCorrectTo1stReversal']
+
+        df['MeanLatencyTo1stReversal'] = np.nan
+        get_mean_latency_first(df, number_mean_reward_first_column_names)
+        df_final['MeanLatencyTo1stReversal'] = df['MeanLatencyTo1stReversal']
 
         df['PercentCorrectTo2ndReversal'] = np.nan
         get_percent_correctness_second(df, df_final, number_correct_column_names)

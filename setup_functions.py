@@ -187,3 +187,30 @@ def get_test_type(df1, column_names):
             df1.at[index[0], 'Type'] = 'easy'
         else:
             df1.at[index[0], 'Type'] = 'undetermined'
+
+
+def get_mean_latency_first(df1, column_names):
+    """
+    This function gets the mean latency to the 1st reversal. If an animal does not reach the 1st reversal,
+    the overall mean latency is the 1st reversal mean latency.
+
+    :param df1: A dataframe that represents the raw ABET data file
+    :param df2: A dataframe that represents the cleaned LD Train/LD Probe data
+    :param column_names: A list of column names used to determine the percent correctness
+    """
+
+    for index in df1.iterrows():
+        stop_point = df1.at[index[0], 'No trials to criterion - Generic Evaluation (1)']
+        # if did not reach first reversal, make the value the correct percentage value
+        if np.isnan(stop_point) or index[1]['End Summary - Times Criteria reached (1)'] == 0:
+            stop_point = df1.at[index[0], 'End Summary - Trials Completed (1)']
+            # df1.at[index[0], 'MeanLatencyTo1stReversal'] = df1.at[index[
+            #                                                              0], 'Trial Analysis - Reward Collection Latency (1)']
+            int_stop_point = int(stop_point)
+
+            df1.at[index[0], 'MeanLatencyTo1stReversal'] = (df1[column_names[0:int_stop_point + 1]].mean(axis=1)[
+                index[0]])
+        else:
+            int_stop_point = int(stop_point)
+            df1.at[index[0], 'MeanLatencyTo1stReversal'] = (df1[column_names[0:int_stop_point]].mean(axis=1)[
+                index[0]])
